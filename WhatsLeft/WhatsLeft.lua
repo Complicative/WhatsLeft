@@ -1,13 +1,16 @@
 WhatsLeft = {
     name = "WhatsLeft",
-    version = "1.0.1",
-    author = "@Complicative"
+    version = "1.0.2",
+    author = "@Complicative",
+    mainFragment1 = ZO_SimpleSceneFragment:New(WhatsLeftTLC1),
+    mainFragment2 = ZO_SimpleSceneFragment:New(WhatsLeftTLC2),
+    mainFragment3 = ZO_SimpleSceneFragment:New(WhatsLeftTLC3),
+    mainFragment4 = ZO_SimpleSceneFragment:New(WhatsLeftTLC4),
 }
 
 WhatsLeft.Settings = {}
 
 WhatsLeft.Default = {
-
     Label1 = {
         ["OffsetX"] = 0,
         ["OffsetY"] = 0,
@@ -39,6 +42,18 @@ WhatsLeft.Default = {
 
 }
 
+function WhatsLeft.SetHidden(fragment, hidden)
+    -- Removes adds to Scenes (proper way to hide/unhide windows)
+    if hidden then
+        HUD_SCENE:RemoveFragment(fragment)
+        HUD_UI_SCENE:RemoveFragment(fragment)
+    end
+    if not hidden then
+        HUD_SCENE:AddFragment(fragment)
+        HUD_UI_SCENE:AddFragment(fragment)
+    end
+end
+
 local LAM2 = LibAddonMenu2
 
 function WhatsLeft.saveLocation()
@@ -53,7 +68,6 @@ function WhatsLeft.saveLocation()
 
     WhatsLeft.Settings.Label4.OffsetX = WhatsLeftTLC4:GetLeft()
     WhatsLeft.Settings.Label4.OffsetY = WhatsLeftTLC4:GetTop()
-
 end
 
 function WhatsLeft.OnAddOnLoaded(event, addonName)
@@ -78,11 +92,15 @@ function WhatsLeft.OnAddOnLoaded(event, addonName)
     WhatsLeftTLC4:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, WhatsLeft.Settings.Label4.OffsetX,
         WhatsLeft.Settings.Label4.OffsetY)
 
-    WhatsLeftTLC1:SetHidden(WhatsLeft.Settings.Label1.Hidden)
+
+    WhatsLeft.SetHidden(WhatsLeft.mainFragment1, WhatsLeft.Settings.Label1.Hidden)
+    WhatsLeft.SetHidden(WhatsLeft.mainFragment2, WhatsLeft.Settings.Label2.Hidden)
+    WhatsLeft.SetHidden(WhatsLeft.mainFragment3, WhatsLeft.Settings.Label3.Hidden)
+    WhatsLeft.SetHidden(WhatsLeft.mainFragment4, WhatsLeft.Settings.Label4.Hidden)
+    --[[ WhatsLeftTLC1:SetHidden(WhatsLeft.Settings.Label1.Hidden)
     WhatsLeftTLC2:SetHidden(WhatsLeft.Settings.Label2.Hidden)
     WhatsLeftTLC3:SetHidden(WhatsLeft.Settings.Label3.Hidden)
-    WhatsLeftTLC4:SetHidden(WhatsLeft.Settings.Label4.Hidden)
-
+    WhatsLeftTLC4:SetHidden(WhatsLeft.Settings.Label4.Hidden) ]]
     WhatsLeftTLC1Label:SetText(WhatsLeft.Settings.Label1.Text)
     WhatsLeftTLC2Label:SetText(WhatsLeft.Settings.Label2.Text)
     WhatsLeftTLC3Label:SetText(WhatsLeft.Settings.Label3.Text)
@@ -148,14 +166,15 @@ function WhatsLeft.OnAddOnLoaded(event, addonName)
 
     optionsData[#optionsData + 1] = {
         type = "checkbox",
-        name = "Show",
-        tooltip = "Do you want to hide the labels?",
+        name = "Enabled",
+        tooltip = "Enable the label?",
         getFunc = function()
             return not WhatsLeft.Settings.Label1.Hidden
         end,
         setFunc = function(value)
             WhatsLeft.Settings.Label1.Hidden = not value
-            WhatsLeftTLC1:SetHidden(not value)
+            WhatsLeft.SetHidden(WhatsLeft.mainFragment1, not value)
+            --[[ WhatsLeftTLC1:SetHidden(not value) ]]
         end
     }
 
@@ -177,7 +196,6 @@ function WhatsLeft.OnAddOnLoaded(event, addonName)
             WhatsLeft.Settings.Label2.Text = text
 
             WhatsLeftTLC2Label:SetText(text)
-
         end
     }
     optionsData[#optionsData + 1] = {
@@ -193,14 +211,14 @@ function WhatsLeft.OnAddOnLoaded(event, addonName)
     }
     optionsData[#optionsData + 1] = {
         type = "checkbox",
-        name = "Show",
-        tooltip = "Do you want to hide the labels?",
+        name = "Enabled",
+        tooltip = "Enable the label?",
         getFunc = function()
-            return not WhatsLeft.Settings.Label4.Hidden
+            return not WhatsLeft.Settings.Label2.Hidden
         end,
         setFunc = function(value)
-            WhatsLeft.Settings.Label4.Hidden = not value
-            WhatsLeftTLC2:SetHidden(not value)
+            WhatsLeft.Settings.Label2.Hidden = not value
+            WhatsLeft.SetHidden(WhatsLeft.mainFragment2, not value)
         end
     }
 
@@ -236,14 +254,14 @@ function WhatsLeft.OnAddOnLoaded(event, addonName)
     }
     optionsData[#optionsData + 1] = {
         type = "checkbox",
-        name = "Show",
-        tooltip = "Do you want to hide the labels?",
+        name = "Enabled",
+        tooltip = "Enable the label?",
         getFunc = function()
             return not WhatsLeft.Settings.Label3.Hidden
         end,
         setFunc = function(value)
             WhatsLeft.Settings.Label3.Hidden = not value
-            WhatsLeftTLC3:SetHidden(not value)
+            WhatsLeft.SetHidden(WhatsLeft.mainFragment3, not value)
         end
     }
 
@@ -279,38 +297,38 @@ function WhatsLeft.OnAddOnLoaded(event, addonName)
     }
     optionsData[#optionsData + 1] = {
         type = "checkbox",
-        name = "Show",
-        tooltip = "Do you want to hide the labels?",
+        name = "Enabled",
+        tooltip = "Enable the label?",
         getFunc = function()
             return not WhatsLeft.Settings.Label4.Hidden
         end,
         setFunc = function(value)
             WhatsLeft.Settings.Label4.Hidden = not value
-            WhatsLeftTLC4:SetHidden(not value)
+            WhatsLeft.SetHidden(WhatsLeft.mainFragment4, not value)
         end
     }
 
     optionsData[#optionsData + 1] = {
         type = "description",
-        text = "If this addon is a life changer, please say \"Thank you\" to @postthemelon on EU or check out her stream at twitch.tv/postthemelon.\n"
+        text =
+            "If this addon is a life changer, please say \"Thank you\" to @postthemelon on EU or check out her stream at twitch.tv/postthemelon.\n"
             ..
             "She is the one, who asked for this addon and I'm sure, she'll enjoy hearing from another left-right blind person :D"
     }
 
     LAM2:RegisterOptionControls("WhatsLeftOptions", optionsData)
-
 end
 
 EVENT_MANAGER:RegisterForEvent(WhatsLeft.name, EVENT_ADD_ON_LOADED, WhatsLeft.OnAddOnLoaded)
 
 SLASH_COMMANDS["/whatsleft"] = function()
     WhatsLeft.Settings.Label1.Hidden = true
-    WhatsLeft.Settings.Label4.Hidden = true
+    WhatsLeft.Settings.Label2.Hidden = true
     WhatsLeft.Settings.Label3.Hidden = true
     WhatsLeft.Settings.Label4.Hidden = true
 
-    WhatsLeftTLC1:SetHidden(WhatsLeft.Settings.Label1.Hidden)
-    WhatsLeftTLC2:SetHidden(WhatsLeft.Settings.Label4.Hidden)
-    WhatsLeftTLC3:SetHidden(WhatsLeft.Settings.Label3.Hidden)
-    WhatsLeftTLC4:SetHidden(WhatsLeft.Settings.Label4.Hidden)
+    WhatsLeft.SetHidden(WhatsLeft.mainFragment1, WhatsLeft.Settings.Label1.Hidden)
+    WhatsLeft.SetHidden(WhatsLeft.mainFragment2, WhatsLeft.Settings.Label2.Hidden)
+    WhatsLeft.SetHidden(WhatsLeft.mainFragment3, WhatsLeft.Settings.Label3.Hidden)
+    WhatsLeft.SetHidden(WhatsLeft.mainFragment4, WhatsLeft.Settings.Label4.Hidden)
 end
